@@ -1,29 +1,32 @@
 #!/bin/bash
 
-# Activate or create virtualenv
-if [ ! -d "venv" ]; then
-  python3 -m venv venv
+APP_NAME="fastapi-sentiment"
+PORT=8010
+
+PYTHON=python3.12  # or python3 if 3.12 is default
+VENV_PATH="venv"
+
+# Create virtual environment if not exists
+if [ ! -d "$VENV_PATH" ]; then
+  $PYTHON -m venv $VENV_PATH
 fi
 
-source venv/bin/activate
+# Activate virtual environment
+source $VENV_PATH/bin/activate
 
-# Upgrade pip & install dependencies
+# Install dependencies (force override if needed)
 pip install --upgrade pip
-pip install -r requirements.txt
 
-# Restart FastAPI app using PM2
-APP_NAME="fastapi-sentiment"
-PORT=7005  # <--- change your desired port
+# PEP 668 workaround: allow pip to run in system Python
+pip install --break-system-packages -r requirements.txt
 
-# Kill if already running
+# Restart the FastAPI app using PM2
 pm2 delete $APP_NAME || true
 
-# Start FastAPI with PM2
 pm2 start uvicorn \
   --name "$APP_NAME" \
-  --interpreter venv/bin/python \
+  --interpreter $VENV_PATH/bin/python \
   -- \
   main:app --host 0.0.0.0 --port $PORT
 
-# Save PM2 process list
 pm2 save
