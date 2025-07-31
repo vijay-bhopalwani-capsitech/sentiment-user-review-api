@@ -1,0 +1,9 @@
+step to run python project:- 
+ pip install -r requirements.txt
+ python -m uvicorn app:app --reload
+ 
+ 
+ 
+FOR LIVE  should be run 
+http://localhost:8010
+
