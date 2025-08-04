@@ -1,5 +1,6 @@
 fastapi
 uvicorn
 transformers
+aio_pika
 torch==2.7.1
 numpy==1.26.4
